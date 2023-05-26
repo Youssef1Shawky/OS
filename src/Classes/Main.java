@@ -6,7 +6,8 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 100; i++) {
+            System.out.println("i =                             " + i);
             if (i == 1)
                 addProcess("src/Program_1.txt", 1);
             else if (i == 4)

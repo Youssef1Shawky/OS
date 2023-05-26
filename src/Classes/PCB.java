@@ -54,4 +54,16 @@ public class PCB {
     public void setMaxBoundary(int maxBoundary) {
         this.maxBoundary = maxBoundary;
     }
+
+
+    @Override
+    public String toString() {
+        return "PCB{" +
+                "ProcessId=" + ProcessId +
+                ", ProcessState='" + ProcessState + '\'' +
+                ", pc=" + pc +
+                ", minBoundary=" + minBoundary +
+                ", maxBoundary=" + maxBoundary +
+                '}';
+    }
 }

@@ -3,7 +3,6 @@ package Classes;
 import Enums.MutexType;
 
 import java.io.IOException;
-import java.lang.management.MemoryUsage;
 import java.util.*;
 
 public class Scheduler {
@@ -33,25 +32,35 @@ public class Scheduler {
             } else
                 blockedQueue.add(processId);
         }
-        if (readyQueue.isEmpty()) return;
-        int processId = readyQueue.poll();
+        if (readyQueue.isEmpty())
+            return;
+        int processId = readyQueue.peek();
         PCB pcb = Memory.getPCB(processId);
         if (timeSliceEachProcess.containsKey(processId) && timeSliceEachProcess.get(processId) >= timeSlice) {
             timeSliceEachProcess.put(processId, 0);
-            addToReadyQueue(processId);
-            processId = readyQueue.poll();
+            addToReadyQueue(readyQueue.poll());
+            processId = readyQueue.peek();
             pcb = Memory.getPCB(processId);
         }
+        timeSliceEachProcess.put(processId, timeSliceEachProcess.getOrDefault(processId, 0) + 1);
+
         String instruction = Memory.getInstruction(processId);
+
+        System.out.println("Process " + processId + " is running");
+        System.out.println("Instruction: " + instruction);
+        System.out.println("Ready Queue: " + readyQueue);
+        System.out.println("Blocked Queue: " + blockedQueue);
+        Memory.print();
+
+
         MutexType mutexType = Parser.getNeededResources(instruction);
-        if (Mutex.occupiedResources.containsKey(mutexType)) {
-            addToBlockedQueue(processId);
+        if (mutexType != null && Mutex.occupiedResources.containsKey(mutexType)) {
+            addToBlockedQueue(readyQueue.poll());
             Memory.changeProcessToBlock(processId);
             System.out.println("Process " + processId + " is blocked");
             timeSliceEachProcess.put(processId, 0);
             return;
         }
-        timeSliceEachProcess.put(processId, timeSliceEachProcess.getOrDefault(processId, 0) + 1);
         String[] data = instruction.split(" ");
         if (data[0].equals("print"))
             SystemCall.print(data[1]);
@@ -67,13 +76,14 @@ public class Scheduler {
                 Memory.increasePC(processId);
             }
         } else if (data[0].equals("writeFile")) {
-            SystemCall.writeFile(data[1], data[2]);
+            SystemCall.writeFile(Memory.getVariable(data[1],pcb), Memory.getVariable(data[2], pcb));
             Memory.increasePC(processId);
         } else if (data[0].equals("readFile")) {
             SystemCall.readFile(data[1], pcb);
             Memory.increasePC(processId);
         } else if (data[0].equals("printFromTo")) {
-            SystemCall.printFromTo(Integer.parseInt(data[1]), Integer.parseInt(data[2]));
+            SystemCall.printFromTo(Integer.parseInt(Memory.getVariable(data[1], pcb)), Integer.parseInt(
+                    Memory.getVariable(data[2], pcb)));
             Memory.increasePC(processId);
         } else if (data[0].equals("semWait")) {
             SystemCall.semWait(MutexType.valueOf(data[1]), pcb);
@@ -85,14 +95,9 @@ public class Scheduler {
             SystemCall.input(pcb);
             Memory.increasePC(processId);
         }
+        if (Memory.processFinished(processId))
+            readyQueue.poll();
 
-        if (!Memory.processFinished(processId))
-            addToReadyQueue(processId);
-        System.out.println("Process " + processId + " is running");
-        System.out.println("Instruction: " + Memory.getInstruction(processId));
-        System.out.println("Ready Queue: " + readyQueue);
-        System.out.println("Blocked Queue: " + blockedQueue);
-        Memory.print();
     }
 
 

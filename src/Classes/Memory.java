@@ -32,12 +32,21 @@ public class Memory {
     public static void assignVariable(String variableName, String value, PCB pcb) {
         int max = pcb.maxBoundary;
         for (int i = max; i > max - 3; i--) {
-            String[] arr = mem[i].split(" ");
-            if (arr[0].equals(variableName)) {
-                mem[i] = variableName + " " + value;
-                break;
+            if (mem[i] != null) {
+                String[] arr = mem[i].split(" ");
+                if (arr[0].equals(variableName)) {
+                    mem[i] = variableName + " " + value;
+                    return;
+                }
             }
         }
+        for (int i = max; i > max - 3; i--) {
+            if (mem[i] == null) {
+                mem[i] = variableName + " " + value;
+                return;
+            }
+        }
+
     }
 
     public static String getVariable(String variableName, PCB pcb) {
@@ -115,9 +124,8 @@ public class Memory {
         FileReader file = new FileReader("src/disk.txt");
         BufferedReader br = new BufferedReader(file);
         String line;
-        while ((line = br.readLine()) != null) {
+        while ((line = br.readLine()) != null)
             instructions.add(line);
-        }
         System.out.println("Process " + processId + " is loaded from disk");
         addProcess(instructions, processId, true);
     }
@@ -230,39 +238,42 @@ public class Memory {
 
     public static void print() {
         System.out.println("Memory: ");
-        if (mem[0] != null) {
-            System.out.println("Process ID: " + mem[0]);
-            System.out.println("Process State: " + mem[1]);
-            System.out.println("PC: " + mem[2]);
-            System.out.println("Min: " + mem[3]);
-            System.out.println("Max: " + mem[4]);
-            System.out.println("Instructions: ");
-            if (mem[3] == null)
-                System.out.println("In Disk");
-            for (int i = Integer.parseInt(mem[3]); i <= Integer.parseInt(mem[4]); i++)
-                System.out.println(mem[i]);
-        } else if (mem[5] != null) {
-            System.out.println("Process ID: " + mem[5]);
-            System.out.println("Process State: " + mem[6]);
-            System.out.println("PC: " + mem[7]);
-            System.out.println("Min: " + mem[8]);
-            System.out.println("Max: " + mem[9]);
-            System.out.println("Instructions: ");
-            if (mem[8] == null)
-                System.out.println("In Disk");
-            for (int i = Integer.parseInt(mem[8]); i <= Integer.parseInt(mem[9]); i++)
-                System.out.println(mem[i]);
-        } else if (mem[10] != null) {
-            System.out.println("Process ID: " + mem[10]);
-            System.out.println("Process State: " + mem[11]);
-            System.out.println("PC: " + mem[12]);
-            System.out.println("Min: " + mem[13]);
-            System.out.println("Max: " + mem[14]);
-            System.out.println("Instructions: ");
-            if (mem[13] == null)
-                System.out.println("In Disk");
-            for (int i = Integer.parseInt(mem[13]); i <= Integer.parseInt(mem[14]); i++)
-                System.out.println(mem[i]);
+        for (int i = 0; i < mem.length; i++) {
+            System.out.println(i + ": " + mem[i]);
         }
+//        if (mem[0] != null) {
+//            System.out.println("Process ID: " + mem[0]);
+//            System.out.println("Process State: " + mem[1]);
+//            System.out.println("PC: " + mem[2]);
+//            System.out.println("Min: " + mem[3]);
+//            System.out.println("Max: " + mem[4]);
+//            System.out.println("Instructions: ");
+//            if (mem[3] == null)
+//                System.out.println("In Disk");
+//            for (int i = Integer.parseInt(mem[3]); i <= Integer.parseInt(mem[4]); i++)
+//                System.out.println(mem[i]);
+//        } else if (mem[5] != null) {
+//            System.out.println("Process ID: " + mem[5]);
+//            System.out.println("Process State: " + mem[6]);
+//            System.out.println("PC: " + mem[7]);
+//            System.out.println("Min: " + mem[8]);
+//            System.out.println("Max: " + mem[9]);
+//            System.out.println("Instructions: ");
+//            if (mem[8] == null)
+//                System.out.println("In Disk");
+//            for (int i = Integer.parseInt(mem[8]); i <= Integer.parseInt(mem[9]); i++)
+//                System.out.println(mem[i]);
+//        } else if (mem[10] != null) {
+//            System.out.println("Process ID: " + mem[10]);
+//            System.out.println("Process State: " + mem[11]);
+//            System.out.println("PC: " + mem[12]);
+//            System.out.println("Min: " + mem[13]);
+//            System.out.println("Max: " + mem[14]);
+//            System.out.println("Instructions: ");
+//            if (mem[13] == null)
+//                System.out.println("In Disk");
+//            for (int i = Integer.parseInt(mem[13]); i <= Integer.parseInt(mem[14]); i++)
+//                System.out.println(mem[i]);
+//        }
     }
 }
