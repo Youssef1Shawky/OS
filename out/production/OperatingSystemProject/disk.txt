@@ -1,0 +1,12 @@
+semWait userInput
+assign a 3333
+semSignal userInput
+semWait file
+assign b readFile a
+semSignal file
+semWait userOutput
+print b
+semSignal userOutput
+null
+a 3333
+input 3333

@@ -17,6 +17,8 @@ public class SystemCall {
     }
 
     public static void writeFile(String fileName, String data) throws IOException {
+        System.out.println("Writing to file: " + fileName);
+        System.out.println("Data: " + data);
         File file = new File(fileName);
         FileWriter fileWriter = new FileWriter(file);
         fileWriter.write(data);

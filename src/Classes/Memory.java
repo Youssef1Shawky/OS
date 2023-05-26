@@ -22,7 +22,6 @@ public class Memory {
         if (mem[13] == null)
             getFromDisk(processId);
         return new PCB(Integer.parseInt(mem[10]), mem[11], Integer.parseInt(mem[12]), Integer.parseInt(mem[13]), Integer.parseInt(mem[14]));
-
     }
 
     public static String getInstruction(int processId) throws IOException {
@@ -32,7 +31,7 @@ public class Memory {
     public static void assignVariable(String variableName, String value, PCB pcb) {
         int max = pcb.maxBoundary;
         for (int i = max; i > max - 3; i--) {
-            if (mem[i] != null) {
+            if (mem[i] != null && !mem[i].equals("null")) {
                 String[] arr = mem[i].split(" ");
                 if (arr[0].equals(variableName)) {
                     mem[i] = variableName + " " + value;
@@ -41,11 +40,12 @@ public class Memory {
             }
         }
         for (int i = max; i > max - 3; i--) {
-            if (mem[i] == null) {
+            if (mem[i] == null || mem[i].equals("null")) {
                 mem[i] = variableName + " " + value;
                 return;
             }
         }
+
 
     }
 
@@ -141,36 +141,40 @@ public class Memory {
             mem[start++] = id + "";
             mem[start++] = "Ready";
             mem[start++] = "0";
-
-
         } else if (mem[10] == null) {
             start = 10;
             mem[start++] = id + "";
             mem[start++] = "Ready";
             mem[start++] = "0";
         }
-
         int startOfInstructions = 15;
         if (mem[15] == null) {
-            for (String instruction : instructions) {
+            for (String instruction : instructions)
                 mem[startOfInstructions++] = instruction;
-            }
             for (int i = 0; i < 3; i++)
                 mem[startOfInstructions++] = null;
             mem[start++] = "15";
             mem[start] = (startOfInstructions - 1) + "";
         } else if (mem[27] == null) {
             startOfInstructions = 27;
-            for (String instruction : instructions) {
+            for (String instruction : instructions)
                 mem[startOfInstructions++] = instruction;
-            }
             if (!isReplace)
                 for (int i = 0; i < 3; i++)
                     mem[startOfInstructions++] = null;
-            mem[start++] = "27";
-            mem[start] = (startOfInstructions - 1) + "";
-        } else
+            if (mem[0].equals(id + "")) {
+                mem[3] = "27";
+                mem[4] = (startOfInstructions - 1) + "";
+            } else if (mem[5].equals(id + "")) {
+                mem[8] = "27";
+                mem[9] = (startOfInstructions - 1) + "";
+            } else if (mem[10].equals(id + "")) {
+                mem[13] = "27";
+                mem[14] = (startOfInstructions - 1) + "";
+            }
+        } else {
             replace(instructions, id, isReplace);
+        }
 
     }
 
@@ -198,9 +202,15 @@ public class Memory {
             mem[13] = null;
             mem[14] = null;
         }
+
         mem[27] = null;
         addProcess(instructions, processId, isReplace);
+//        Memory.print();
         writeOnDisk(list);
+//        System.out.println("\n\n\n\n\n");
+//        System.out.println(list);
+//        System.out.println(instructions);
+
     }
 
     public static void changeProcessToBlock(int processId) {
@@ -224,6 +234,8 @@ public class Memory {
     }
 
     public static void writeOnDisk(ArrayList<String> list) throws IOException {
+        File file = new File("src/disk.txt");
+        file.createNewFile();
         FileWriter myWriter = new FileWriter("src/disk.txt");
         StringBuilder sb = new StringBuilder();
         for (String s : list)
