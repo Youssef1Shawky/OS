@@ -1,10 +1,12 @@
 semWait userInput
-assign a 21
-assign b 222222222
+assign a a
 semSignal userInput
 semWait file
-writeFile a b
+assign b 58
 semSignal file
-b 222222222
-a 21
-input 222222222
+semWait userOutput
+print b
+semSignal userOutput
+file 58
+a a
+input a

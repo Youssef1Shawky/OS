@@ -45,6 +45,13 @@ public class Memory {
                 return;
             }
         }
+        for (int i = max; i > max - 3; i--) {
+            String[] arr = mem[i].split(" ");
+            if (arr[0].equals("input")) {
+                mem[i] = variableName + " " + value;
+                return;
+            }
+        }
 
 
     }

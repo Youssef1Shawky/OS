@@ -12,10 +12,8 @@ public class Main {
                 addProcess("src/Program_1.txt", 1);
             else if (i == 4)
                 addProcess("src/Program_2.txt", 2);
-            else if (i == 7){
-
+            else if (i == 7) {
                 addProcess("src/Program_3.txt", 3);
-
             }
             Scheduler.clock();
         }
