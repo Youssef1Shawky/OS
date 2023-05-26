@@ -62,8 +62,10 @@ public class Scheduler {
             return;
         }
         String[] data = instruction.split(" ");
-        if (data[0].equals("print"))
-            SystemCall.print(data[1]);
+        if (data[0].equals("print")){
+            SystemCall.print(Memory.getVariable(data[1],pcb));
+            Memory.increasePC(processId);
+        }
         else if (data[0].equals("assign")) {
             if (data[2].equals("input")) {
                 SystemCall.input(pcb);
@@ -79,7 +81,7 @@ public class Scheduler {
             SystemCall.writeFile(Memory.getVariable(data[1],pcb), Memory.getVariable(data[2], pcb));
             Memory.increasePC(processId);
         } else if (data[0].equals("readFile")) {
-            SystemCall.readFile(data[1], pcb);
+            SystemCall.readFile(Memory.getVariable(data[1],pcb), pcb);
             Memory.increasePC(processId);
         } else if (data[0].equals("printFromTo")) {
             SystemCall.printFromTo(Integer.parseInt(Memory.getVariable(data[1], pcb)), Integer.parseInt(
